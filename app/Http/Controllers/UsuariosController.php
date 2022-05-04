@@ -153,6 +153,7 @@ class UsuariosController extends Controller
                     "mensagem" => AppConfigs::SUCESSO_AO_ATUALIZAR,
                     "dados" => array($empresas, $usuario)
                 );
+                $this->status = AppConfigs::HTTP_STATUS_OK;
             } catch (\Throwable $th) {
                 $resposta = array(
                     "mensagem" => AppConfigs::FALHA_AO_ATUALIZAR,

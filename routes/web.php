@@ -19,4 +19,7 @@ $router->group(['prefix' => 'usuario'], function () use ($router) {
 $router->group(['prefix' => 'empresa'], function () use ($router) {
     $router->get('/', 'EmpresasController@listarTodos');
     $router->get('/{id}', 'EmpresasController@listarPorId');
+    $router->delete('/{id}', 'EmpresasController@deletar');
+    // $router->put('/{id}', 'UsuariosController@atualizar');
+    // $router->post('/', 'UsuariosController@cadastrar');
 });

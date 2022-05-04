@@ -72,4 +72,33 @@ class EmpresasController extends Controller
         }
         return (new Response($resposta, $this->status));
     }
+
+    public function deletar($id)
+    {
+        $resposta = array();
+        $empresa = Empresas::find($id);
+        if ($empresa) {
+            try {
+                $empresa->delete();
+                $resposta = array(
+                    "mensagem" => AppConfigs::SUCESSO_AO_DELETAR,
+                    "dados" => $empresa
+                );
+                $this->status = AppConfigs::HTTP_STATUS_OK;
+            } catch (\Throwable $th) {
+                $resposta = array(
+                    "mensagem" => AppConfigs::FALHA_AO_DELETAR,
+                    "erro" => $th->getMessage(),
+                    "dados" => array()
+                );
+            }
+        } else {
+            $resposta = array(
+                "mensagem" => AppConfigs::NENHUM_REGISTRO_COM_ESTE_ID,
+                "dados" => array()
+            );
+            $this->status = AppConfigs::HTTP_STATUS_NOT_FOUND;
+        }
+        return (new Response($resposta, $this->status));
+    }
 }

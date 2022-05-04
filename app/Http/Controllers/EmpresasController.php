@@ -101,4 +101,37 @@ class EmpresasController extends Controller
         }
         return (new Response($resposta, $this->status));
     }
+
+    public function atualizar($id, Request $request)
+    {
+        $resposta = array();
+        $empresa = Empresas::find($id);
+        if ($empresa) {
+            $empresa->nome = $request->nome;
+            $empresa->cnpj = $request->cnpj;
+            $empresa->endereco =  $request->endereco;
+
+            try {
+                $empresa->save();
+                $resposta = array(
+                    "mensagem" => AppConfigs::SUCESSO_AO_ATUALIZAR,
+                    "dados" => array($empresa)
+                );
+                $this->status = AppConfigs::HTTP_STATUS_OK;
+            } catch (\Throwable $th) {
+                $resposta = array(
+                    "mensagem" => AppConfigs::FALHA_AO_ATUALIZAR,
+                    "erro" => $th->getMessage(),
+                    "dados" => array()
+                );
+            }
+        } else {
+            $resposta = array(
+                "mensagem" => AppConfigs::NENHUM_REGISTRO_COM_ESTE_ID,
+                "dados" => array()
+            );
+            $this->status = AppConfigs::HTTP_STATUS_NOT_FOUND;
+        }
+        return (new Response($resposta, $this->status));
+    }
 }

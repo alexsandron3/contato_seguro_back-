@@ -14,9 +14,9 @@ class AppConfigs
   const FALHA_AO_PESQUISAR = 'Falha ao pesquisar  registro!';
   const FALHA_AO_ATUALIZAR = 'Falha ao tentar atualizar este registro!';
   const NADA_ENCONTRADO_NA_PESQUISA = 'Nenhum registro foi encontrado!';
-  const METODO_NAO_PERMITIDO = "Método não permitido!";
   const ID_NAO_INFORMADO = "ID não encontrado na requisição!";
   const NENHUM_REGISTRO_COM_ESTE_ID = "Nenhum registro com este ID foi encontrado!";
+  const METODO_NAO_PERMITIDO = "Método não permitido!";
 
   // STATUS HTTP
   const HTTP_STATUS_OK = 200;

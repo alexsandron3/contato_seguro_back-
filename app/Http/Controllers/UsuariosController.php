@@ -104,4 +104,33 @@ class UsuariosController extends Controller
         }
         return (new Response($resposta, $this->status));
     }
+
+    public function deletar($id)
+    {
+        $resposta = array();
+        $usuario = Usuarios::find($id);
+        if ($usuario) {
+            try {
+                $usuario->delete();
+                $resposta = array(
+                    "mensagem" => AppConfigs::SUCESSO_AO_DELETAR,
+                    "dados" => $usuario
+                );
+                $this->status = AppConfigs::HTTP_STATUS_OK;
+            } catch (\Throwable $th) {
+                $resposta = array(
+                    "mensagem" => AppConfigs::FALHA_AO_DELETAR,
+                    "erro" => $th->getMessage(),
+                    "dados" => array()
+                );
+            }
+        } else {
+            $resposta = array(
+                "mensagem" => AppConfigs::NENHUM_REGISTRO_COM_ESTE_ID,
+                "dados" => array()
+            );
+            $this->status = AppConfigs::HTTP_STATUS_NOT_FOUND;
+        }
+        return (new Response($resposta, $this->status));
+    }
 }

@@ -12,3 +12,10 @@ $router->group(['prefix' => 'usuario'], function () use ($router) {
     $router->put('/{id}', 'UsuariosController@atualizar');
     $router->post('/', 'UsuariosController@cadastrar');
 });
+
+/**
+ * Grupo de rotas para empresas
+ */
+$router->group(['prefix' => 'empresa'], function () use ($router) {
+    $router->get('/', 'EmpresasController@listarTodos');
+});

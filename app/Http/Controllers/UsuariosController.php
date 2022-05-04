@@ -91,8 +91,7 @@ class UsuariosController extends Controller
 
             $resposta = array(
                 "mensagem" => AppConfigs::SUCESSO_AO_CADASTRAR,
-                "usuario" => $usuario,
-                "dados" => $empresas
+                "dados" => array($empresas, $usuario)
             );
             $this->status = AppConfigs::HTTP_STATUS_CREATED;
         } catch (\Throwable $th) {

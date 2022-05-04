@@ -2,35 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\AppConfigs;
 use App\Models\Usuarios;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
 
 class UsuariosController extends Controller
 {
+    protected int $status = AppConfigs::HTTP_STATUS_BAD_REQUEST;
     public function listarTodos()
     {
-        $usuario = Usuarios::join('empresas_usuarios', 'empresas_usuarios.idUsuario', '=', 'usuarios.id')
-            ->join('empresas', 'empresas.id', '=', 'empresas_usuarios.idEmpresa')
-            ->select(
-                Usuarios::raw('usuarios.id, usuarios.nome, usuarios.email, usuarios.telefone, usuarios.cidadeNascimento, usuarios.dataNascimento'),
-                Usuarios::raw('GROUP_CONCAT(empresas.nome) AS nomeEmpresa')
-            )
-            ->groupBy('usuarios.id')
-            ->get();
-        return $usuario;
+        $resposta = array();
+        try {
+            $usuario = Usuarios::join("empresas_usuarios", "empresas_usuarios.idUsuario", "=", "usuarios.id")
+                ->join("empresas", "empresas.id", "=", "empresas_usuarios.idEmpresa")
+                ->select(
+                    Usuarios::raw("usuarios.id, usuarios.nome, usuarios.email, usuarios.telefone, usuarios.cidadeNascimento, usuarios.dataNascimento"),
+                    Usuarios::raw("GROUP_CONCAT(empresas.nome) AS nomeEmpresa")
+                )
+                ->groupBy("usuarios.id")
+                ->get();
+            $resposta = array(
+                "mensagem" => AppConfigs::SUCESSO_AO_PESQUISAR,
+                "dados" => $usuario
+            );
+            $this->status = AppConfigs::HTTP_STATUS_OK;
+        } catch (\Throwable $th) {
+            $resposta = array(
+                "mensagem" => AppConfigs::FALHA_AO_PESQUISAR,
+                "erro" => $th->getMessage(),
+                "dados" => array()
+            );
+        }
+        return (new Response($resposta, $this->status));
     }
     public function listarPorId($id)
     {
-        $usuario = Usuarios::join('empresas_usuarios', 'empresas_usuarios.idUsuario', '=', 'usuarios.id')
-            ->join('empresas', 'empresas.id', '=', 'empresas_usuarios.idEmpresa')
-            ->select(
-                Usuarios::raw('usuarios.id, usuarios.nome, usuarios.email, usuarios.telefone, usuarios.cidadeNascimento, usuarios.dataNascimento'),
-                Usuarios::raw('GROUP_CONCAT(empresas.nome) AS nomeEmpresa')
-            )
-            ->where('usuarios.id', $id)
-            ->groupBy('usuarios.id')
-            ->get();
-        return $usuario;
+        $resposta = array();
+        try {
+            $usuario = Usuarios::join("empresas_usuarios", "empresas_usuarios.idUsuario", "=", "usuarios.id")
+                ->join("empresas", "empresas.id", "=", "empresas_usuarios.idEmpresa")
+                ->select(
+                    Usuarios::raw("usuarios.id, usuarios.nome, usuarios.email, usuarios.telefone, usuarios.cidadeNascimento, usuarios.dataNascimento"),
+                    Usuarios::raw("GROUP_CONCAT(empresas.nome) AS nomeEmpresa")
+                )
+                ->where("usuarios.id", $id)
+                ->groupBy("usuarios.id")
+                ->get();
+            $resposta = array(
+                "mensagem" => AppConfigs::SUCESSO_AO_PESQUISAR,
+                "dados" => $usuario
+            );
+            $this->status = AppConfigs::HTTP_STATUS_OK;
+            if (!sizeof($usuario)) {
+                $resposta = array(
+                    "mensagem" => AppConfigs::NENHUM_REGISTRO_COM_ESTE_ID,
+                    "dados" => $usuario
+                );
+                $this->status = AppConfigs::HTTP_STATUS_NOT_FOUND;
+            }
+        } catch (\Throwable $th) {
+            $resposta = array(
+                "mensagem" => AppConfigs::FALHA_AO_PESQUISAR,
+                "erro" => $th->getMessage(),
+                "dados" => array()
+            );
+        }
+        return (new Response($resposta, $this->status));
     }
 
 
@@ -51,16 +90,18 @@ class UsuariosController extends Controller
             $usuario->empresas()->attach($empresas);
 
             $resposta = array(
-                'mensagem' => 'Usuário cadastrado com sucesso',
-                'usuario' => $usuario,
-                'empresas' => $empresas
+                "mensagem" => AppConfigs::SUCESSO_AO_CADASTRAR,
+                "usuario" => $usuario,
+                "dados" => $empresas
             );
+            $this->status = AppConfigs::HTTP_STATUS_CREATED;
         } catch (\Throwable $th) {
             $resposta = array(
-                'mensagem' => 'Erro ao cadastrar usuário',
-                'erro' => $th->getMessage()
+                "mensagem" => AppConfigs::FALHA_AO_CADASTRAR,
+                "erro" => $th->getMessage(),
+                "dados" => array()
             );
         }
-        return $resposta;
+        return (new Response($resposta, $this->status));
     }
 }

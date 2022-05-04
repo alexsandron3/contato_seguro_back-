@@ -133,4 +133,41 @@ class UsuariosController extends Controller
         }
         return (new Response($resposta, $this->status));
     }
+
+    public function atualizar($id, Request $request)
+    {
+        $resposta = array();
+        $usuario = Usuarios::find($id);
+        if ($usuario) {
+            $usuario->email = $request->email;
+            $usuario->telefone = $request->telefone;
+            $usuario->dataNascimento = empty($request->dataNascimento) ? null : $request->dataNascimento;
+            $usuario->cidadeNascimento = $request->cidadeNascimento;
+            $usuario->nome = $request->nome;
+
+            try {
+                $usuario->save();
+                $empresas = $request->empresas;
+
+                $usuario->empresas()->sync($empresas);
+                $resposta = array(
+                    "mensagem" => AppConfigs::SUCESSO_AO_ATUALIZAR,
+                    "dados" => array($empresas, $usuario)
+                );
+            } catch (\Throwable $th) {
+                $resposta = array(
+                    "mensagem" => AppConfigs::FALHA_AO_ATUALIZAR,
+                    "erro" => $th->getMessage(),
+                    "dados" => array()
+                );
+            }
+        } else {
+            $resposta = array(
+                "mensagem" => AppConfigs::NENHUM_REGISTRO_COM_ESTE_ID,
+                "dados" => array()
+            );
+            $this->status = AppConfigs::HTTP_STATUS_NOT_FOUND;
+        }
+        return (new Response($resposta, $this->status));
+    }
 }

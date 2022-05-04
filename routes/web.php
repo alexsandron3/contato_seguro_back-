@@ -21,5 +21,5 @@ $router->group(['prefix' => 'empresa'], function () use ($router) {
     $router->get('/{id}', 'EmpresasController@listarPorId');
     $router->delete('/{id}', 'EmpresasController@deletar');
     $router->put('/{id}', 'EmpresasController@atualizar');
-    // $router->post('/', 'UsuariosController@cadastrar');
+    $router->post('/', 'EmpresasControllerr@cadastrar');
 });

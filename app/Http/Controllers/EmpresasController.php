@@ -134,4 +134,29 @@ class EmpresasController extends Controller
         }
         return (new Response($resposta, $this->status));
     }
+
+    public function cadastrar(Request $request)
+    {
+        $resposta = array();
+        $empresa = new Empresas();
+        $empresa->nome = $request->nome;
+        $empresa->cnpj = $request->cnpj;
+        $empresa->endereco =  $request->endereco;
+        try {
+            $empresa->save();
+
+            $resposta = array(
+                "mensagem" => AppConfigs::SUCESSO_AO_CADASTRAR,
+                "dados" => array($empresa)
+            );
+            $this->status = AppConfigs::HTTP_STATUS_CREATED;
+        } catch (\Throwable $th) {
+            $resposta = array(
+                "mensagem" => AppConfigs::FALHA_AO_CADASTRAR,
+                "erro" => $th->getMessage(),
+                "dados" => array()
+            );
+        }
+        return (new Response($resposta, $this->status));
+    }
 }

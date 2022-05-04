@@ -11,5 +11,5 @@
 
 $router->group(['prefix' => 'usuarios'], function () use ($router) {
     $router->get('/', 'UsuariosController@listarTodos');
-
+    $router->get('/{id}', 'UsuariosController@listarPorId');
 });

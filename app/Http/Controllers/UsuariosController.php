@@ -32,4 +32,35 @@ class UsuariosController extends Controller
             ->get();
         return $usuario;
     }
+
+
+    public function cadastrar(Request $request)
+    {
+        $resposta = array();
+        $usuario = new Usuarios();
+        $usuario->email = $request->email;
+        $usuario->telefone = $request->telefone;
+        $usuario->dataNascimento = empty($request->dataNascimento) ? null : $request->dataNascimento;
+        $usuario->cidadeNascimento = $request->cidadeNascimento;
+        $usuario->nome = $request->nome;
+        try {
+            $usuario->save();
+
+            $empresas = $request->empresas;
+
+            $usuario->empresas()->attach($empresas);
+
+            $resposta = array(
+                'mensagem' => 'Usuário cadastrado com sucesso',
+                'usuario' => $usuario,
+                'empresas' => $empresas
+            );
+        } catch (\Throwable $th) {
+            $resposta = array(
+                'mensagem' => 'Erro ao cadastrar usuário',
+                'erro' => $th->getMessage()
+            );
+        }
+        return $resposta;
+    }
 }
